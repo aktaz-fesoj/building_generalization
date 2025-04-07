@@ -39,8 +39,8 @@ class Algorithms:
         ch = QPolygonF()
         
         # Create pivot
-        q = min(polygon, key = lambda k: k.y())
-        pj = q
+        q = max(polygon, key = lambda k: k.y())
+        pj = QPointF(q.x()+0.1, q.y()+0.1)  #offset to avoid pj = pj1
         
         # Create point ph1
         px = min(polygon, key = lambda k: k.x())
@@ -109,7 +109,7 @@ class Algorithms:
         y_max = max(pol, key = lambda k: k.y()).y()
         
         #Compute area
-        area = (x_max - x_min) * (y_max - y_min)
+        area = abs((x_max - x_min) * (y_max - y_min))
         
         #Create min-max box vertices
         v1 = QPointF(x_min, y_min)
@@ -264,3 +264,34 @@ class Algorithms:
         mmb_min_res = self.resizeRectangle(building_r, mmb)
                 
         return self.rotate(mmb_min_res, sigma)
+    
+    def createLongestEdge(self, polygon: QPolygonF):
+        # creates simplified polygon using Longest Edge method, 
+        # returns resized MMB oriented in the same angle as the longest edge of the original polygon
+
+        #find the longest edge
+        max_edge_len = 0
+        alfa = 0
+        
+        for i in range(len(polygon)):
+            p1_x, p1_y = polygon[i].x(), polygon[i].y()
+            p2_x, p2_y = polygon[(i + 1) % len(polygon)].x(), polygon[(i + 1) % len(polygon)].y()
+
+            dx, dy = p1_x - p2_x, p1_y - p2_y
+            edge_len = sqrt(dx**2 + dy**2)
+
+            if edge_len > max_edge_len:
+                max_edge_len = edge_len
+                alfa = self.get2VectorsAngle(QPointF(0,0), QPointF(1,0), polygon[i], polygon[(i + 1) % len(polygon)])
+                #QPointF(polygon[i].x(), polygon[i].y()), [polygon[(i + 1) % len(polygon)].x(), polygon[(i + 1) % len(polygon)].y()])
+                
+        
+        #rotate the original polygon before creating mmb
+        rotated_polygon = self.rotate(polygon, alfa)
+        
+        mmb, area = self.createMMB(rotated_polygon)
+        
+        #rerotate the mmb to align with the longest edge of the original polygon
+        mmb_rotated = self.rotate(mmb, -alfa)
+        
+        return self.resizeRectangle(polygon, mmb_rotated)
