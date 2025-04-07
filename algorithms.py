@@ -8,7 +8,6 @@ class Algorithms:
     def __init__(self):
         pass
     
-    
     def get2VectorsAngle(self, p1: QPointF, p2: QPointF, p3: QPointF, p4:QPointF):
         # Compute angle between two vectors
         ux = p2.x() - p1.x()
@@ -40,7 +39,8 @@ class Algorithms:
         
         # Create pivot
         q = min(polygon, key = lambda k: k.y())
-        pj = q
+        # pj cant be same as px, otherwise vector size would be 0 and program would crash
+        pj = QPointF(q.x()+0.1e-6, q.y()+0.1e-6)
         
         # Create point ph1
         px = min(polygon, key = lambda k: k.x())
@@ -195,6 +195,8 @@ class Algorithms:
         #Simplify building using MBR
         sigma_min = 0
         
+        if len(building)  < 4:
+            raise ValueError("Atleast 4 points are required for this method to work")        
         #Create convex hull
         ch = self.createCH(building)
         
@@ -231,7 +233,15 @@ class Algorithms:
         return self.rotate(mmb_min_res, sigma_min)
         
     def createBRPCA(self, building: QPolygonF):
-        
+        """"
+        Simpliefies building using PCA
+
+        Raises: ValueError if building has only three points
+
+        Reutrns: The simplified building: QPolygonF
+        """
+        if len(building) < 4:
+            raise ValueError("Atleast 4 points are required for this method to work")
         x = []
         y = []
         
