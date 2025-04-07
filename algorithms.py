@@ -194,9 +194,7 @@ class Algorithms:
     def createMBR(self, building: QPolygonF):
         #Simplify building using MBR
         sigma_min = 0
-        
-        if len(building)  < 4:
-            raise ValueError("Atleast 4 points are required for this method to work")        
+              
         #Create convex hull
         ch = self.createCH(building)
         
@@ -240,8 +238,6 @@ class Algorithms:
 
         Reutrns: The simplified building: QPolygonF
         """
-        if len(building) < 4:
-            raise ValueError("Atleast 4 points are required for this method to work")
         x = []
         y = []
         

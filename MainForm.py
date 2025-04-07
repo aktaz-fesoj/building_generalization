@@ -123,15 +123,7 @@ class Ui_MainForm(object):
         # get input data
         building = ui.Canvas.getBuilding()
         
-        try:
-            # simplify building
-            building_simp = a.createMBR(building)
-        except ValueError as e:
-            dialog = QtWidgets.QMessageBox()
-            dialog.setWindowTitle('Error')
-            dialog.setText(str(e))
-            dialog.exec()
-            return
+        building_simp = a.createMBR(building)
         
         # set result
         ui.Canvas.setSimplifiedBuilding(building_simp)
@@ -144,15 +136,7 @@ class Ui_MainForm(object):
         # get input data
         building = ui.Canvas.getBuilding()
         
-        try:
-            # simplify building
-            building_simp = a.createBRPCA(building)
-        except ValueError as e:
-            dialog = QtWidgets.QMessageBox()
-            dialog.setWindowTitle('Error')
-            dialog.setText(str(e))
-            dialog.exec()
-            return
+        building_simp = a.createBRPCA(building)
         
         # set result
         ui.Canvas.setSimplifiedBuilding(building_simp)
