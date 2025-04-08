@@ -265,7 +265,7 @@ class Algorithms:
                 
         return self.rotate(mmb_min_res, sigma)
     
-    def createLongestEdge(self, polygon: QPolygonF):
+    def createLongestEdge(self, building: QPolygonF):
         # creates simplified polygon using Longest Edge method, 
         # returns resized MMB oriented in the same angle as the longest edge of the original polygon
 
@@ -273,25 +273,46 @@ class Algorithms:
         max_edge_len = 0
         alfa = 0
         
-        for i in range(len(polygon)):
-            p1_x, p1_y = polygon[i].x(), polygon[i].y()
-            p2_x, p2_y = polygon[(i + 1) % len(polygon)].x(), polygon[(i + 1) % len(polygon)].y()
+        for i in range(len(building)):
+            p1_x, p1_y = building[i].x(), building[i].y()
+            p2_x, p2_y = building[(i + 1) % len(building)].x(), building[(i + 1) % len(building)].y()
 
             dx, dy = p1_x - p2_x, p1_y - p2_y
             edge_len = sqrt(dx**2 + dy**2)
 
             if edge_len > max_edge_len:
                 max_edge_len = edge_len
-                alfa = self.get2VectorsAngle(QPointF(0,0), QPointF(1,0), polygon[i], polygon[(i + 1) % len(polygon)])
+                alfa = self.get2VectorsAngle(QPointF(0,0), QPointF(1,0), building[i], building[(i + 1) % len(building)])
                 #QPointF(polygon[i].x(), polygon[i].y()), [polygon[(i + 1) % len(polygon)].x(), polygon[(i + 1) % len(polygon)].y()])
                 
         
         #rotate the original polygon before creating mmb
-        rotated_polygon = self.rotate(polygon, alfa)
+        rotated_polygon = self.rotate(building, alfa)
         
         mmb, area = self.createMMB(rotated_polygon)
         
         #rerotate the mmb to align with the longest edge of the original polygon
         mmb_rotated = self.rotate(mmb, -alfa)
         
-        return self.resizeRectangle(polygon, mmb_rotated)
+        return self.resizeRectangle(building, mmb_rotated)
+
+    def gain(self, p1: QPoint, p2: QPoint):
+        dx = p1.x() - p2.x()
+        dy = p1.y() - p2.y()
+        gain = atan2(dy, dx)
+
+        return gain
+    
+    def createWallAverage(self, building: QPolygonF):
+        # creates a simplified building using the Wall Average method
+        
+        #calculate gain of the first edge
+        sigma_base = self.gain(building[0], building[1])
+        
+        sigma_list = []
+        # count the sigma_dif for each edge
+        for i in range(len(building)):
+            p1 = building[i]
+            p2 = building[(i + 1) % len(building)]
+            sigma = self.gain(p1, p2)
+            sigma_list.append(sigma)
