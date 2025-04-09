@@ -278,32 +278,33 @@ class Algorithms:
         max_edge_len = 0
         alfa = 0
         
+        #looking for the longest edge
         for i in range(len(building)):
             p1_x, p1_y = building[i].x(), building[i].y()
             p2_x, p2_y = building[(i + 1) % len(building)].x(), building[(i + 1) % len(building)].y()
 
+            #calculate edge lenght
             dx, dy = p1_x - p2_x, p1_y - p2_y
             edge_len = sqrt(dx**2 + dy**2)
 
             if edge_len > max_edge_len:
                 max_edge_len = edge_len
-                alfa = self.get2VectorsAngle(QPointF(0,0), QPointF(1,0), building[i], building[(i + 1) % len(building)])
-                #QPointF(polygon[i].x(), polygon[i].y()), [polygon[(i + 1) % len(polygon)].x(), polygon[(i + 1) % len(polygon)].y()])
-                
+                #get gain of the longest edge
+                alfa = self.gain(building[i], building[(i + 1) % len(building)])               
         
         #rotate the original polygon before creating mmb
-        rotated_polygon = self.rotate(building, alfa)
+        rotated_polygon = self.rotate(building, -alfa)
         
         mmb, area = self.createMMB(rotated_polygon)
         
         #rerotate the mmb to align with the longest edge of the original polygon
-        mmb_rotated = self.rotate(mmb, -alfa)
+        mmb_rotated = self.rotate(mmb, alfa)
         
         return self.resizeRectangle(building, mmb_rotated)
 
     def gain(self, p1: QPoint, p2: QPoint):
-        dx = p1.x() - p2.x()
-        dy = p1.y() - p2.y()
+        dx = p2.x() - p1.x()
+        dy = p2.y() - p1.y()
         gain = atan2(dy, dx)
 
         return gain
