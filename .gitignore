@@ -8,12 +8,12 @@ __pycache__/
 *$py.class
 
 tempCodeRunnerFile.py
-.debugging/
 debugging/
-__pycache__/
 
 # C extensions
 *.so
+
+data/
 
 # Distribution / packaging
 .Python

@@ -231,9 +231,7 @@ class Algorithms:
         
     def createBRPCA(self, building: QPolygonF):
         """"
-        Simpliefies building using PCA
-
-        Raises: ValueError if building has only three points
+        Simpliefies building using PCA and min max box
 
         Reutrns: The simplified building: QPolygonF
         """
@@ -321,3 +319,18 @@ class Algorithms:
             p2 = building[(i + 1) % len(building)]
             sigma = self.gain(p1, p2)
             sigma_list.append(sigma)
+
+    def createWeightedBisector(self, building: QPolygonF):
+        """"
+        Simpliefies building using weighted bisector and min max box
+
+        Reutrns: The simplified building: QPolygonF
+        """
+        #create edge from pairs of all points
+        #iterate over all pairs
+            #find the two longest diagonals
+        #calculate the direction of each diagonal
+        #calculate the principal direction (s1*d1+s2*d2)/(d1+d2)
+        #rotate original polygon (negative prinical direction)
+        #create min max box (rotated original polygon)
+        #rotate the min max box back to original orientation
