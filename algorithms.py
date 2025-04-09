@@ -145,8 +145,10 @@ class Algorithms:
         #Compute k
         Ab = self.getArea(building)
         A = self.getArea(mbr)
-        if A == 0: k = 1
-        k = Ab / A
+        if A == 0: 
+            k = 1
+        else:
+            k = Ab / A
         
         # Compute centroid
         x_t = 0.25*(mbr[0].x()+mbr[1].x()+mbr[2].x()+mbr[3].x())
@@ -351,7 +353,7 @@ class Algorithms:
         main_direction = sigma_base + ri_edge_len_sum / edge_len_sum
         
         building_rotated = self.rotate(building, -main_direction)
-        mmb = self.createMMB(building_rotated)[1]
+        mmb, area = self.createMMB(building_rotated)
         mmb_rotated = self.rotate(mmb, main_direction)
         mmb_resized = self.resizeRectangle(building, mmb_rotated)
 

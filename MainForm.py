@@ -56,6 +56,12 @@ class Ui_MainForm(object):
         icon7.addPixmap(QtGui.QPixmap("images/icons/longestedge.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.actionLongestEdge.setIcon(icon7)
         self.actionLongestEdge.setObjectName("actionLongestEdge")
+        
+        self.actionWallAverage = QtGui.QAction(parent=MainForm)
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap("images/icons/wa.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionWallAverage.setIcon(icon8)
+        self.actionWallAverage.setObjectName("actionWallAverage")
 
         self.actionWeightedBisector = QtGui.QAction(parent=MainForm)
         icon6 = QtGui.QIcon()
@@ -79,6 +85,7 @@ class Ui_MainForm(object):
         self.menuSimplify.addAction(self.actionMBR)
         self.menuSimplify.addAction(self.actionPCA)
         self.menuSimplify.addAction(self.actionLongestEdge)
+        self.menuSimplify.addAction(self.actionWallAverage)
         self.menuSimplify.addAction(self.actionWeightedBisector)
         self.menuView.addAction(self.actionClear_results)
         self.menuView.addAction(self.actionClear_all)
@@ -90,6 +97,7 @@ class Ui_MainForm(object):
         self.toolBar.addAction(self.actionMBR)
         self.toolBar.addAction(self.actionPCA)
         self.toolBar.addAction(self.actionLongestEdge)
+        self.toolBar.addAction(self.actionWallAverage)
         self.toolBar.addAction(self.actionWeightedBisector)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionClear_results)
@@ -107,6 +115,7 @@ class Ui_MainForm(object):
         self.actionClear_results.triggered.connect(self.clearResult)
         self.actionExit.triggered.connect(self.closeApp)
         self.actionLongestEdge.triggered.connect(self.simplifyBuildingLongestEdge)
+        self.actionWallAverage.triggered.connect(self.simplifyBuildingWallAverage)
         self.actionWeightedBisector.triggered.connect(self.simplifyBuildingWeightedBisector)
 
     def retranslateUi(self, MainForm):
@@ -124,6 +133,8 @@ class Ui_MainForm(object):
         self.actionMBR.setToolTip(_translate("MainForm", "Simplify building using MBR"))
         self.actionLongestEdge.setText(_translate("MainForm", "longestedge"))
         self.actionLongestEdge.setToolTip(_translate("MainForm", "Simplify building using Longest Edge"))
+        self.actionWallAverage.setText(_translate("MainForm", "wallaverage"))
+        self.actionWallAverage.setToolTip(_translate("MainForm", "Simplify building using Wall Average"))
         self.actionWeightedBisector.setText(_translate("MainForm", "weightedbisector"))
         self.actionWeightedBisector.setToolTip(_translate("MainForm", "Simplify building using Weighted Bisector"))
         self.actionPCA.setText(_translate("MainForm", "PCA"))
@@ -174,6 +185,20 @@ class Ui_MainForm(object):
         
         # simplify building
         building_simp = a.createLongestEdge(building)
+        
+        # set result
+        ui.Canvas.setSimplifiedBuilding(building_simp)
+
+        #repaint
+        ui.Canvas.repaint()
+        
+    def simplifyBuildingWallAverage(self, building):
+        a = Algorithms()
+        # get input data
+        building = ui.Canvas.getBuilding()
+        
+        # simplify building
+        building_simp = a.createWallAverage(building)
         
         # set result
         ui.Canvas.setSimplifiedBuilding(building_simp)
