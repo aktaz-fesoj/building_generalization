@@ -50,6 +50,13 @@ class Ui_MainForm(object):
         icon3.addPixmap(QtGui.QPixmap("images/icons/pca.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.actionPCA.setIcon(icon3)
         self.actionPCA.setObjectName("actionPCA")
+        
+        self.actionLongestEdge = QtGui.QAction(parent=MainForm)
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap("images/icons/longestedge.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionPCA.setIcon(icon5)
+        self.actionPCA.setObjectName("actionLongestEdge")
+        
         self.actionClear_results = QtGui.QAction(parent=MainForm)
         icon4 = QtGui.QIcon()
         icon4.addPixmap(QtGui.QPixmap("images/icons/clear.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
@@ -65,6 +72,7 @@ class Ui_MainForm(object):
         self.menuFile.addAction(self.actionExit)
         self.menuSimplify.addAction(self.actionMBR)
         self.menuSimplify.addAction(self.actionPCA)
+        self.menuSimplify.addAction(self.actionLongestEdge)
         self.menuView.addAction(self.actionClear_results)
         self.menuView.addAction(self.actionClear_all)
         self.menubar.addAction(self.menuFile.menuAction())
@@ -74,6 +82,7 @@ class Ui_MainForm(object):
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionMBR)
         self.toolBar.addAction(self.actionPCA)
+        self.toolBar.addAction(self.actionLongestEdge)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionClear_results)
         self.toolBar.addAction(self.actionClear_all)
@@ -89,6 +98,7 @@ class Ui_MainForm(object):
         self.actionClear_all.triggered.connect(self.clearData)
         self.actionClear_results.triggered.connect(self.clearResult)
         self.actionExit.triggered.connect(self.closeApp)
+        self.actionLongestEdge.triggered.connect(self.simplifyBuildingLongestEdge)
 
     def retranslateUi(self, MainForm):
         _translate = QtCore.QCoreApplication.translate
@@ -137,6 +147,20 @@ class Ui_MainForm(object):
         building = ui.Canvas.getBuilding()
         
         building_simp = a.createBRPCA(building)
+        
+        # set result
+        ui.Canvas.setSimplifiedBuilding(building_simp)
+
+        #repaint
+        ui.Canvas.repaint()
+        
+    def simplifyBuildingLongestEdge(self, building):
+        a = Algorithms()
+        # get input data
+        building = ui.Canvas.getBuilding()
+        
+        # simplify building
+        building_simp = a.createLongestEdge(building)
         
         # set result
         ui.Canvas.setSimplifiedBuilding(building_simp)
