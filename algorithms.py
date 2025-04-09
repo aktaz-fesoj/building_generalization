@@ -1,13 +1,15 @@
+from math import *
+from itertools import combinations
+from heapq import heapify, heappop, heappush
+
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
-from math import *
 import numpy as np
 
 class Algorithms:
     def __init__(self):
         pass
-    
     
     def get2VectorsAngle(self, p1: QPointF, p2: QPointF, p3: QPointF, p4:QPointF):
         # Compute angle between two vectors
@@ -31,7 +33,6 @@ class Algorithms:
         
         return acos(arg)
     
-    
     def createCH(self, polygon: QPolygonF):
         """
         Create convex hull using Jarvis Scan
@@ -39,8 +40,9 @@ class Algorithms:
         ch = QPolygonF()
         
         # Create pivot
-        q = max(polygon, key = lambda k: k.y())
-        pj = QPointF(q.x()+0.1, q.y()+0.1)  #offset to avoid pj = pj1
+        q = min(polygon, key = lambda k: k.y())
+        # pj cant be same as px, otherwise vector size would be 0 and program would crash
+        pj = QPointF(q.x()+0.1e-6, q.y()+0.1e-6)
         
         # Create point ph1
         px = min(polygon, key = lambda k: k.x())
@@ -125,7 +127,6 @@ class Algorithms:
         
         return mmb, area
         
-        
     def getArea(self, pol: QPolygonF):
         # Compute area of a polygon
         area = 0
@@ -136,7 +137,6 @@ class Algorithms:
             area += pol[i].x()*(pol[(i+1)%n].y()-pol[(i-1+n)%n].y())
             
         return abs(area)/2
-        
             
     def resizeRectangle(self,building:QPolygonF, mbr:QPolygonF):
         # Resizing rectangle to match the building area
@@ -145,6 +145,7 @@ class Algorithms:
         #Compute k
         Ab = self.getArea(building)
         A = self.getArea(mbr)
+        if A == 0: k = 1
         k = Ab / A
         
         # Compute centroid
@@ -194,7 +195,7 @@ class Algorithms:
     def createMBR(self, building: QPolygonF):
         #Simplify building using MBR
         sigma_min = 0
-        
+
         #Create convex hull
         ch = self.createCH(building)
         
@@ -231,7 +232,11 @@ class Algorithms:
         return self.rotate(mmb_min_res, sigma_min)
         
     def createBRPCA(self, building: QPolygonF):
-        
+        """"
+        Simpliefies building using PCA and min max box
+
+        Reutrns: The simplified building: QPolygonF
+        """
         x = []
         y = []
         
@@ -306,7 +311,6 @@ class Algorithms:
     def createWallAverage(self, building: QPolygonF):
         # creates a simplified building using the Wall Average method
         
-        
         sigma_list = []
         # count sigma (=gain) for each edge
         for i in range(len(building)):
@@ -351,3 +355,60 @@ class Algorithms:
         mmb_resized = self.resizeRectangle(building, mmb_rotated)
 
         return mmb_resized
+
+    def createWeightedBisector(self, building: QPolygonF) -> QPolygonF:
+        """"
+        Simpliefies building using weighted bisector and min max box
+
+        Reutrns: The simplified building: QPolygonF
+        """
+        #create edges from pairs of all points
+        #iterate over all pairs
+            #find the two longest diagonals
+        #calculate the direction of each diagonal
+        #calculate the principal direction (s1*d1+s2*d2)/(d1+d2)
+        #rotate original polygon (negative prinical direction)
+        #create min max box (rotated original polygon)
+        #rotate the min max box back to original orientation
+
+        points = [building[i] for i in range(len(building))]
+        point_pairs = list(combinations(points, 2))
+
+        #Z hloubi duše bych se chtěl omluvit všem, kteří si čtou tento kód. Je to prohřešek, za který se budu zpovídat před branou nebeskou.
+        diagonals_all = []
+        diagonals = [0,0]
+        distances = [0,0]
+        angles = [0,0]
+
+        #find the longest diagonals
+        for pair in point_pairs:
+            dist = self.euclideanDistance(pair[0], pair[1])
+            diagonals_all.append((pair, dist))
+        diagonals_all.sort(key=lambda x: x[1], reverse=True)
+        diagonals[0], distances[0] = diagonals_all[0]
+        diagonals[1], distances[1] = diagonals_all[1]
+
+        #calculate direction of each diagonal
+        angles[0] = atan2(diagonals[0][1].y() - diagonals[0][0].y(), diagonals[0][1].x() - diagonals[0][0].x())
+        angles[1] = atan2(diagonals[1][1].y() - diagonals[1][0].y(), diagonals[1][1].x() - diagonals[1][0].x())
+
+        #calculate the principal direction
+        sigma = (distances[0] * angles[0] + distances[1] * angles[1]) / (distances[0] + distances[1])
+
+        building_rotated = self.rotate(building, -sigma)
+
+        mmb, area = self.createMMB(building_rotated)
+
+        mmb_min_res = self.resizeRectangle(building_rotated, mmb)
+            
+        return self.rotate(mmb_min_res, sigma)
+
+    def euclideanDistance(self, point1: QPointF, point2: QPointF) -> float:
+        """
+        Calculates the euclidean distance of two points
+
+        Returns: the calculated distance: float
+        """
+
+        dist = sqrt((point1.x() - point2.x())**2 + (point1.y() - point2.y())**2)
+        return dist

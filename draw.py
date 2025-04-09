@@ -29,9 +29,6 @@ class Draw(QWidget):
         #Create new graphic object
         qp = QPainter(self)
         
-        #Start drawing
-        qp.begin(self)
-        
         #Set graphical attributes
         qp.setPen(Qt.GlobalColor.black)
         qp.setBrush(Qt.GlobalColor.yellow)
@@ -53,10 +50,16 @@ class Draw(QWidget):
     def setSimplifiedBuilding(self, building_simp_):
         self.building_simp = building_simp_
     
-    def clearData(self):
-        #Clear polygon
+    def clearBuildings(self):
+        #Clear polygons
         self.building.clear()
+        self.building_simp.clear()
         
         #Repaint screen
+        self.repaint()
+    
+    def clearSimpBuilding(self):
+        self.building_simp.clear()
+
         self.repaint()
         
