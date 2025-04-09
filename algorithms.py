@@ -344,3 +344,10 @@ class Algorithms:
             
         #σ = σ₁ + (∑ rᵢ·sᵢ) / (∑ sᵢ) = calculate the main direction of building   
         main_direction = sigma_base + ri_edge_len_sum / edge_len_sum
+        
+        building_rotated = self.rotate(building, -main_direction)
+        mmb = self.createMMB(building_rotated)[1]
+        mmb_rotated = self.rotate(mmb, main_direction)
+        mmb_resized = self.resizeRectangle(building, mmb_rotated)
+
+        return mmb_resized
