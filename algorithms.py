@@ -1,4 +1,6 @@
 from math import *
+from itertools import combinations
+from heapq import heapify, heappop, heappush
 
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
@@ -320,13 +322,13 @@ class Algorithms:
             sigma = self.gain(p1, p2)
             sigma_list.append(sigma)
 
-    def createWeightedBisector(self, building: QPolygonF):
+    def createWeightedBisector(self, building: QPolygonF) -> QPolygonF:
         """"
         Simpliefies building using weighted bisector and min max box
 
         Reutrns: The simplified building: QPolygonF
         """
-        #create edge from pairs of all points
+        #create edges from pairs of all points
         #iterate over all pairs
             #find the two longest diagonals
         #calculate the direction of each diagonal
@@ -334,3 +336,46 @@ class Algorithms:
         #rotate original polygon (negative prinical direction)
         #create min max box (rotated original polygon)
         #rotate the min max box back to original orientation
+
+        points = [building[i] for i in range(len(building))]
+        point_pairs = list(combinations(points, 2))
+
+        #Z hloubi duše bych se chtěl omluvit všem, kteří si čtou tento kód. Je to prohřešek, za který se budu zpovídat před branou nebeskou.
+        diagonals_all = []
+        diagonals = [0,0]
+        distances = [0,0]
+        angles = [0,0]
+
+        #find the longest diagonals
+        for pair in point_pairs:
+            dist = self.euclideanDistance(pair[0], pair[1])
+            diagonals_all.append((pair, dist))
+        diagonals_all.sort(key=lambda x: x[1], reverse=True)
+        print(diagonals_all)
+        diagonals[0], distances[0] = diagonals_all[0]
+        diagonals[1], distances[1] = diagonals_all[1]
+
+        #calculate direction of each diagonal
+        angles[0] = atan2(diagonals[0][1].y() - diagonals[0][0].y(), diagonals[0][1].x() - diagonals[0][0].x())
+        angles[1] = atan2(diagonals[1][1].y() - diagonals[1][0].y(), diagonals[1][1].x() - diagonals[1][0].x())
+
+        #calculate the principal direction
+        sigma = (distances[0] * angles[0] + distances[1] * angles[1]) / (distances[0] + distances[1])
+
+        building_rotated = self.rotate(building, -sigma)
+
+        mmb, area = self.createMMB(building_rotated)
+
+        mmb_min_res = self.resizeRectangle(building_rotated, mmb)
+            
+        return self.rotate(mmb_min_res, sigma)
+
+    def euclideanDistance(self, point1: QPointF, point2: QPointF) -> float:
+        """
+        Calculates the euclidean distance of two points
+
+        Returns: the calculated distance: float
+        """
+
+        dist = sqrt((point1.x() - point2.x())**2 + (point1.y() - point2.y())**2)
+        return dist

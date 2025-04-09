@@ -52,10 +52,16 @@ class Ui_MainForm(object):
         self.actionPCA.setObjectName("actionPCA")
         
         self.actionLongestEdge = QtGui.QAction(parent=MainForm)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap("images/icons/longestedge.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        self.actionPCA.setIcon(icon5)
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap("images/icons/longestedge.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionPCA.setIcon(icon7)
         self.actionPCA.setObjectName("actionLongestEdge")
+
+        self.actionWeightedBisector = QtGui.QAction(parent=MainForm)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap("images/icons/weightedbisector.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionWeightedBisector.setIcon(icon6)
+        self.actionWeightedBisector.setObjectName("actionWeightedBisector")
         
         self.actionClear_results = QtGui.QAction(parent=MainForm)
         icon4 = QtGui.QIcon()
@@ -73,6 +79,7 @@ class Ui_MainForm(object):
         self.menuSimplify.addAction(self.actionMBR)
         self.menuSimplify.addAction(self.actionPCA)
         self.menuSimplify.addAction(self.actionLongestEdge)
+        self.menuSimplify.addAction(self.actionWeightedBisector)
         self.menuView.addAction(self.actionClear_results)
         self.menuView.addAction(self.actionClear_all)
         self.menubar.addAction(self.menuFile.menuAction())
@@ -83,6 +90,7 @@ class Ui_MainForm(object):
         self.toolBar.addAction(self.actionMBR)
         self.toolBar.addAction(self.actionPCA)
         self.toolBar.addAction(self.actionLongestEdge)
+        self.toolBar.addAction(self.actionWeightedBisector)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionClear_results)
         self.toolBar.addAction(self.actionClear_all)
@@ -99,6 +107,7 @@ class Ui_MainForm(object):
         self.actionClear_results.triggered.connect(self.clearResult)
         self.actionExit.triggered.connect(self.closeApp)
         self.actionLongestEdge.triggered.connect(self.simplifyBuildingLongestEdge)
+        self.actionWeightedBisector.triggered.connect(self.simplifyBuildingWeightedBisector)
 
     def retranslateUi(self, MainForm):
         _translate = QtCore.QCoreApplication.translate
@@ -166,6 +175,17 @@ class Ui_MainForm(object):
         ui.Canvas.setSimplifiedBuilding(building_simp)
 
         #repaint
+        ui.Canvas.repaint()
+
+    def simplifyBuildingWeightedBisector(self, building):
+        a = Algorithms()
+
+        building = ui.Canvas.getBuilding()
+
+        building_simp = a.createWeightedBisector(building)
+
+        ui.Canvas.setSimplifiedBuilding(building_simp)
+
         ui.Canvas.repaint()
 
 if __name__ == "__main__":
