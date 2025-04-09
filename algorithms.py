@@ -351,7 +351,6 @@ class Algorithms:
             dist = self.euclideanDistance(pair[0], pair[1])
             diagonals_all.append((pair, dist))
         diagonals_all.sort(key=lambda x: x[1], reverse=True)
-        print(diagonals_all)
         diagonals[0], distances[0] = diagonals_all[0]
         diagonals[1], distances[1] = diagonals_all[1]
 
