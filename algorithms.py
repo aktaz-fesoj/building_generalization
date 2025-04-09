@@ -1,7 +1,8 @@
+from math import *
+
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
-from math import *
 import numpy as np
 
 class Algorithms:
@@ -29,7 +30,6 @@ class Algorithms:
         arg = max(arg, -1)
         
         return acos(arg)
-    
     
     def createCH(self, polygon: QPolygonF):
         """
@@ -125,7 +125,6 @@ class Algorithms:
         
         return mmb, area
         
-        
     def getArea(self, pol: QPolygonF):
         # Compute area of a polygon
         area = 0
@@ -136,7 +135,6 @@ class Algorithms:
             area += pol[i].x()*(pol[(i+1)%n].y()-pol[(i-1+n)%n].y())
             
         return abs(area)/2
-        
             
     def resizeRectangle(self,building:QPolygonF, mbr:QPolygonF):
         # Resizing rectangle to match the building area
@@ -145,6 +143,7 @@ class Algorithms:
         #Compute k
         Ab = self.getArea(building)
         A = self.getArea(mbr)
+        if A == 0: k = 1
         k = Ab / A
         
         # Compute centroid
@@ -194,7 +193,7 @@ class Algorithms:
     def createMBR(self, building: QPolygonF):
         #Simplify building using MBR
         sigma_min = 0
-              
+
         #Create convex hull
         ch = self.createCH(building)
         
