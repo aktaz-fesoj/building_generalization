@@ -306,13 +306,41 @@ class Algorithms:
     def createWallAverage(self, building: QPolygonF):
         # creates a simplified building using the Wall Average method
         
-        #calculate gain of the first edge
-        sigma_base = self.gain(building[0], building[1])
         
         sigma_list = []
-        # count the sigma_dif for each edge
+        # count sigma (=gain) for each edge
         for i in range(len(building)):
             p1 = building[i]
             p2 = building[(i + 1) % len(building)]
             sigma = self.gain(p1, p2)
             sigma_list.append(sigma)
+        
+        #get gain of the first edge
+        sigma_base = sigma_list[0]
+            
+        ri_edge_len_sum = 0
+        edge_len_sum = 0
+        
+        
+        for i in range(len(sigma_list)):
+            sigma_i = sigma_list[i]
+            sigma_i1 = sigma_list[(i+1) % len(sigma_list)]
+            
+            omega = abs(sigma_i - sigma_i1)
+            
+            #calculate edge lenght
+            dx, dy = building[i].x() - building[(i+1) % len(building)].x(), building[i].y() - building[(i+1) % len(building)].y()
+            edge_len = sqrt(dx**2 + dy**2)
+            
+            #calculate ki 
+            ki = (2 * omega) / pi
+            
+            #orientovaný zbytek po dělení
+            ri = (ki - floor(ki)) * (pi/2)
+            
+            #calculate the sums
+            ri_edge_len_sum += ri * edge_len
+            edge_len_sum += edge_len
+            
+        #σ = σ₁ + (∑ rᵢ·sᵢ) / (∑ sᵢ) = calculate the main direction of building   
+        main_direction = sigma_base + ri_edge_len_sum / edge_len_sum
