@@ -148,9 +148,13 @@ class Ui_MainForm(object):
         a = Algorithms()
         # get input data
         buildings = ui.Canvas.buildings
+
+        #simplify all input data
         buildings_simp = []
         for building in buildings:
             buildings_simp.append(a.createMBR(building))
+
+        #set simplified buildings
         ui.Canvas.buildings_simp = buildings_simp
 
         #repaint
@@ -158,40 +162,50 @@ class Ui_MainForm(object):
         
     def simplifyBuildingPCA(self, building):
         a = Algorithms()
-        # get input data
-        building = ui.Canvas.getBuilding()
-        
-        building_simp = a.createBRPCA(building)
-        
-        # set result
-        ui.Canvas.setSimplifiedBuilding(building_simp)
+        # get input data     
+        buildings = ui.Canvas.buildings
+
+        #simplify all input data
+        buildings_simp = []
+        for building in buildings:
+            buildings_simp.append(a.createBRPCA(building))
+
+        #set simplified buildings
+        ui.Canvas.buildings_simp = buildings_simp
 
         #repaint
         ui.Canvas.repaint()
         
     def simplifyBuildingLongestEdge(self, building):
         a = Algorithms()
-        # get input data
-        building = ui.Canvas.getBuilding()
-        
-        # simplify building
-        building_simp = a.createLongestEdge(building)
-        
-        # set result
-        ui.Canvas.setSimplifiedBuilding(building_simp)
+        # get input data     
+        buildings = ui.Canvas.buildings
+
+        #simplify all input data
+        buildings_simp = []
+        for building in buildings:
+            buildings_simp.append(a.createLongestEdge(building))
+
+        #set simplified buildings
+        ui.Canvas.buildings_simp = buildings_simp
 
         #repaint
         ui.Canvas.repaint()
 
     def simplifyBuildingWeightedBisector(self, building):
         a = Algorithms()
+        # get input data     
+        buildings = ui.Canvas.buildings
 
-        building = ui.Canvas.getBuilding()
+        #simplify all input data
+        buildings_simp = []
+        for building in buildings:
+            buildings_simp.append(a.createWeightedBisector(building))
 
-        building_simp = a.createWeightedBisector(building)
+        #set simplified buildings
+        ui.Canvas.buildings_simp = buildings_simp
 
-        ui.Canvas.setSimplifiedBuilding(building_simp)
-
+        #repaint
         ui.Canvas.repaint()
 
     def openFileDialog(self):
