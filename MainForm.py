@@ -1,6 +1,8 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
+
 from draw import Draw
 from algorithms import *
+from read_shp import load_shapefile
 
 class Ui_MainForm(object):
     def setupUi(self, MainForm):
@@ -117,6 +119,7 @@ class Ui_MainForm(object):
         self.actionLongestEdge.triggered.connect(self.simplifyBuildingLongestEdge)
         self.actionWallAverage.triggered.connect(self.simplifyBuildingWallAverage)
         self.actionWeightedBisector.triggered.connect(self.simplifyBuildingWeightedBisector)
+        self.actionOpen.triggered.connect(self.openFileDialog)
 
     def retranslateUi(self, MainForm):
         _translate = QtCore.QCoreApplication.translate
@@ -155,39 +158,47 @@ class Ui_MainForm(object):
     def simplifyBuildingMBR(self, building):
         a = Algorithms()
         # get input data
-        building = ui.Canvas.getBuilding()
-        
-        building_simp = a.createMBR(building)
-        
-        # set result
-        ui.Canvas.setSimplifiedBuilding(building_simp)
+        buildings = ui.Canvas.buildings
+
+        #simplify all input data
+        buildings_simp = []
+        for building in buildings:
+            buildings_simp.append(a.createMBR(building))
+
+        #set simplified buildings
+        ui.Canvas.buildings_simp = buildings_simp
 
         #repaint
         ui.Canvas.repaint()
         
     def simplifyBuildingPCA(self, building):
         a = Algorithms()
-        # get input data
-        building = ui.Canvas.getBuilding()
-        
-        building_simp = a.createBRPCA(building)
-        
-        # set result
-        ui.Canvas.setSimplifiedBuilding(building_simp)
+        # get input data     
+        buildings = ui.Canvas.buildings
+
+        #simplify all input data
+        buildings_simp = []
+        for building in buildings:
+            buildings_simp.append(a.createBRPCA(building))
+
+        #set simplified buildings
+        ui.Canvas.buildings_simp = buildings_simp
 
         #repaint
         ui.Canvas.repaint()
         
     def simplifyBuildingLongestEdge(self, building):
         a = Algorithms()
-        # get input data
-        building = ui.Canvas.getBuilding()
-        
-        # simplify building
-        building_simp = a.createLongestEdge(building)
-        
-        # set result
-        ui.Canvas.setSimplifiedBuilding(building_simp)
+        # get input data     
+        buildings = ui.Canvas.buildings
+
+        #simplify all input data
+        buildings_simp = []
+        for building in buildings:
+            buildings_simp.append(a.createLongestEdge(building))
+
+        #set simplified buildings
+        ui.Canvas.buildings_simp = buildings_simp
 
         #repaint
         ui.Canvas.repaint()
@@ -208,12 +219,32 @@ class Ui_MainForm(object):
 
     def simplifyBuildingWeightedBisector(self, building):
         a = Algorithms()
+        # get input data     
+        buildings = ui.Canvas.buildings
 
-        building = ui.Canvas.getBuilding()
+        #simplify all input data
+        buildings_simp = []
+        for building in buildings:
+            buildings_simp.append(a.createWeightedBisector(building))
 
-        building_simp = a.createWeightedBisector(building)
+        #set simplified buildings
+        ui.Canvas.buildings_simp = buildings_simp
 
-        ui.Canvas.setSimplifiedBuilding(building_simp)
+        #repaint
+        ui.Canvas.repaint()
+
+    def openFileDialog(self):
+        file_dialog = QtWidgets.QFileDialog()
+        file_path, _ = file_dialog.getOpenFileName(
+            None, "Open File", "", "Shapefiles (*.shp)"
+        )
+
+        width = ui.Canvas.width()
+        height = ui.Canvas.height()
+
+        polygons = load_shapefile(file_path, width, height)
+        
+        ui.Canvas.paintInputEvent(polygons)
 
         ui.Canvas.repaint()
 

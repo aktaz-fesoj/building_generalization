@@ -365,19 +365,26 @@ class Algorithms:
 
         Reutrns: The simplified building: QPolygonF
         """
-        #create edges from pairs of all points
-        #iterate over all pairs
-            #find the two longest diagonals
-        #calculate the direction of each diagonal
-        #calculate the principal direction (s1*d1+s2*d2)/(d1+d2)
-        #rotate original polygon (negative prinical direction)
-        #create min max box (rotated original polygon)
-        #rotate the min max box back to original orientation
+        #todo list
+        #filter out edges from diagonals
+        #filter out lines that intersect polygons from diagonals
+        #if no correct diagonals are found create a fallback
+
+        #there might be bug with angle wrapping? (not sure how to solve it)
 
         points = [building[i] for i in range(len(building))]
         point_pairs = list(combinations(points, 2))
 
         #Z hloubi duše bych se chtěl omluvit všem, kteří si čtou tento kód. Je to prohřešek, za který se budu zpovídat před branou nebeskou.
+
+        points_number = len(building)
+        edges = []
+
+        #update filter list with polygon edges
+        for i in range(points_number):
+            edge = building[i], building[(i + 1) % len(building)]
+            edges.append(edge)
+
         diagonals_all = []
         diagonals = [0,0]
         distances = [0,0]
@@ -385,8 +392,26 @@ class Algorithms:
 
         #find the longest diagonals
         for pair in point_pairs:
+
+            #check whether segment isnt an edge (that would be invalid diagonal)
+            if pair in edges or (pair[1], pair[0]) in edges:
+                continue
+
+            #check for intersection of a segment and building edges (that would be invalid diagonal)
+            if self.checkForIntersection(pair[0], pair[1], edges):
+                continue                
+            
             dist = self.euclideanDistance(pair[0], pair[1])
             diagonals_all.append((pair, dist))
+
+        #fallback when there are no valid diagonals
+        if len(diagonals_all) < 2:
+            print("Failed to find two valid diagonals, defaulting to using edges")
+            diagonals_all = []
+            for edge in edges:
+                edge_dists = self.euclideanDistance(edge[0], edge[1])
+                diagonals_all.append((edge, edge_dists))
+
         diagonals_all.sort(key=lambda x: x[1], reverse=True)
         diagonals[0], distances[0] = diagonals_all[0]
         diagonals[1], distances[1] = diagonals_all[1]
@@ -415,3 +440,22 @@ class Algorithms:
 
         dist = sqrt((point1.x() - point2.x())**2 + (point1.y() - point2.y())**2)
         return dist
+    
+    def checkForIntersection(self, p1: QPointF, p2: QPointF, edges: list[QPointF]) -> bool:
+        """
+        Finds if there is an intersection beetween segments created from two points and a list of points
+
+        Returns:
+            Intersection: True
+            No intersection found: False
+        """
+        for edge in edges:
+            p3, p4 = edge[0], edge[1]
+            t1 = (p2.x() - p1.x()) * (p4.y() - p1.y()) - (p4.x() - p1.x()) * (p2.y() - p1.y())
+            t2 = (p2.x() - p1.x()) * (p3.y() - p1.y()) - (p3.x() - p1.x()) * (p2.y() - p1.y())
+            t3 = (p4.x() - p3.x()) * (p1.y() - p3.y()) - (p1.x() - p3.x()) * (p4.y() - p3.y())
+            t4 = (p4.x() - p3.x()) * (p2.y() - p3.y()) - (p2.x() - p3.x()) * (p4.y() - p3.y())
+            if (t1 * t2 < 0) and (t3 * t4 < 0):
+                return True
+
+        return False
