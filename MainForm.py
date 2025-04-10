@@ -206,7 +206,7 @@ class Ui_MainForm(object):
     def simplifyBuildingWallAverage(self, building):
         a = Algorithms()
         # get input data
-        building = ui.Canvas.getBuilding()
+        building = ui.Canvas.buildings
         
         # simplify building
         building_simp = a.createWallAverage(building)

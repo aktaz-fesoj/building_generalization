@@ -342,7 +342,7 @@ class Algorithms:
             #calculate ki 
             ki = (2 * omega) / pi
             
-            #orientovaný zbytek po dělení
+            #orientovaný zbytek po dělení - residual
             ri = (ki - floor(ki)) * (pi/2)
             
             #calculate the sums
