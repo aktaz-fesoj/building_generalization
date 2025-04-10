@@ -11,6 +11,9 @@ class Draw(QWidget):
         
         self.building = QPolygonF()
         self.building_simp = QPolygonF()
+
+        self.buildings = [] #list[QPolygonF]
+        self.buildings_simp = [] #list[QPolygonF]
         
     def mousePressEvent(self, e: QMouseEvent):
         #Get coordinates of q
@@ -24,7 +27,6 @@ class Draw(QWidget):
         #Repaint screen
         self.repaint()
         
-        
     def paintEvent(self, e: QPaintEvent):
         #Create new graphic object
         qp = QPainter(self)
@@ -34,15 +36,20 @@ class Draw(QWidget):
         qp.setBrush(Qt.GlobalColor.yellow)
         
         #Draw building
-        qp.drawPolygon(self.building)
+        for building in self.buildings:
+            qp.drawPolygon(building)
         
         #Set graphical attributes
         qp.setPen(Qt.GlobalColor.gray)
         qp.setBrush(Qt.GlobalColor.blue)
         
         #Draw building
-        qp.drawPolygon(self.building_simp)
-    
+        for building_simp in self.buildings_simp:
+            qp.drawPolygon(building_simp)
+
+    def paintInputEvent(self, polygons):
+        self.buildings = polygons
+
     def getBuilding(self):
         # Return analyzed building
         return self.building
