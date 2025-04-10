@@ -319,7 +319,7 @@ class Algorithms:
         for i in range(len(building)):
             p1 = building[i]
             p2 = building[(i + 1) % len(building)]
-            sigma = self.gain(p1, p2)
+            sigma = self.gain(p1, p2) % (pi/2)  # modulo pi/2 for each edge
             sigma_list.append(sigma)
         
         #get gain of the first edge
@@ -352,9 +352,9 @@ class Algorithms:
         #σ = σ₁ + (∑ rᵢ·sᵢ) / (∑ sᵢ) = calculate the main direction of building   
         main_direction = sigma_base + ri_edge_len_sum / edge_len_sum
         
-        building_rotated = self.rotate(building, -main_direction)
+        building_rotated = self.rotate(building, main_direction)
         mmb, area = self.createMMB(building_rotated)
-        mmb_rotated = self.rotate(mmb, main_direction)
+        mmb_rotated = self.rotate(mmb, -main_direction)
         mmb_resized = self.resizeRectangle(building, mmb_rotated)
 
         return mmb_resized
