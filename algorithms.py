@@ -328,14 +328,12 @@ class Algorithms:
 
         Reutrns: The simplified building: QPolygonF
         """
-        #create edges from pairs of all points
-        #iterate over all pairs
-            #find the two longest diagonals
-        #calculate the direction of each diagonal
-        #calculate the principal direction (s1*d1+s2*d2)/(d1+d2)
-        #rotate original polygon (negative prinical direction)
-        #create min max box (rotated original polygon)
-        #rotate the min max box back to original orientation
+        #todo list
+        #filter out lines that intersect polygons from diagonals
+        #filter out edges from diagonals
+        #if no correct diagonals are found create a fallback
+
+        #there might be bug with angle wrapping? (not sure how to solve it)
 
         points = [building[i] for i in range(len(building))]
         point_pairs = list(combinations(points, 2))
