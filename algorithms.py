@@ -147,8 +147,10 @@ class Algorithms:
         #Compute k
         Ab = self.getArea(building)
         A = self.getArea(mbr)
-        if A == 0: k = 1
-        k = Ab / A
+        if A == 0: 
+            k = 1
+        else:
+            k = Ab / A
         
         # Compute centroid
         x_t = 0.25*(mbr[0].x()+mbr[1].x()+mbr[2].x()+mbr[3].x())
@@ -281,32 +283,33 @@ class Algorithms:
         max_edge_len = 0
         alfa = 0
         
+        #looking for the longest edge
         for i in range(len(building)):
             p1_x, p1_y = building[i].x(), building[i].y()
             p2_x, p2_y = building[(i + 1) % len(building)].x(), building[(i + 1) % len(building)].y()
 
+            #calculate edge lenght
             dx, dy = p1_x - p2_x, p1_y - p2_y
             edge_len = sqrt(dx**2 + dy**2)
 
             if edge_len > max_edge_len:
                 max_edge_len = edge_len
-                alfa = self.get2VectorsAngle(QPointF(0,0), QPointF(1,0), building[i], building[(i + 1) % len(building)])
-                #QPointF(polygon[i].x(), polygon[i].y()), [polygon[(i + 1) % len(polygon)].x(), polygon[(i + 1) % len(polygon)].y()])
-                
+                #get gain of the longest edge
+                alfa = self.gain(building[i], building[(i + 1) % len(building)])               
         
         #rotate the original polygon before creating mmb
-        rotated_polygon = self.rotate(building, alfa)
+        rotated_polygon = self.rotate(building, -alfa)
         
         mmb, area = self.createMMB(rotated_polygon)
         
         #rerotate the mmb to align with the longest edge of the original polygon
-        mmb_rotated = self.rotate(mmb, -alfa)
+        mmb_rotated = self.rotate(mmb, alfa)
         
         return self.resizeRectangle(building, mmb_rotated)
 
     def gain(self, p1: QPoint, p2: QPoint):
-        dx = p1.x() - p2.x()
-        dy = p1.y() - p2.y()
+        dx = p2.x() - p1.x()
+        dy = p2.y() - p1.y()
         gain = atan2(dy, dx)
 
         return gain
@@ -314,16 +317,50 @@ class Algorithms:
     def createWallAverage(self, building: QPolygonF):
         # creates a simplified building using the Wall Average method
         
-        #calculate gain of the first edge
-        sigma_base = self.gain(building[0], building[1])
-        
         sigma_list = []
-        # count the sigma_dif for each edge
+        # count sigma (=gain) for each edge
         for i in range(len(building)):
             p1 = building[i]
             p2 = building[(i + 1) % len(building)]
-            sigma = self.gain(p1, p2)
+            sigma = self.gain(p1, p2) % (pi/2)  # modulo pi/2 for each edge
             sigma_list.append(sigma)
+        
+        #get gain of the first edge
+        sigma_base = sigma_list[0]
+            
+        ri_edge_len_sum = 0
+        edge_len_sum = 0
+        
+        
+        for i in range(len(sigma_list)):
+            sigma_i = sigma_list[i]
+            sigma_i1 = sigma_list[(i+1) % len(sigma_list)]
+            
+            omega = abs(sigma_i - sigma_i1)
+            
+            #calculate edge lenght
+            dx, dy = building[i].x() - building[(i+1) % len(building)].x(), building[i].y() - building[(i+1) % len(building)].y()
+            edge_len = sqrt(dx**2 + dy**2)
+            
+            #calculate ki 
+            ki = (2 * omega) / pi
+            
+            #orientovaný zbytek po dělení - residual
+            ri = (ki - floor(ki)) * (pi/2)
+            
+            #calculate the sums
+            ri_edge_len_sum += ri * edge_len
+            edge_len_sum += edge_len
+            
+        #σ = σ₁ + (∑ rᵢ·sᵢ) / (∑ sᵢ) = calculate the main direction of building   
+        main_direction = sigma_base + ri_edge_len_sum / edge_len_sum
+        
+        building_rotated = self.rotate(building, -main_direction)
+        mmb, area = self.createMMB(building_rotated)
+        mmb_rotated = self.rotate(mmb, main_direction)
+        mmb_resized = self.resizeRectangle(building, mmb_rotated)
+
+        return mmb_resized
 
     def createWeightedBisector(self, building: QPolygonF) -> QPolygonF:
         """"
