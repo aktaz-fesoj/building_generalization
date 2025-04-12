@@ -233,7 +233,7 @@ class Algorithms:
         #resize        
         mmb_min_res = self.resizeRectangle(building, mmb_min)
 
-        self.sigma = sigma 
+        self.sigma = -sigma_min
         return self.rotate(mmb_min_res, sigma_min)
         
     def createBRPCA(self, building: QPolygonF):
@@ -272,7 +272,8 @@ class Algorithms:
         
         #resize        
         mmb_min_res = self.resizeRectangle(building_r, mmb)
-                
+
+        self.sigma = -sigma                
         return self.rotate(mmb_min_res, sigma)
     
     def createLongestEdge(self, building: QPolygonF):
@@ -305,6 +306,7 @@ class Algorithms:
         #rerotate the mmb to align with the longest edge of the original polygon
         mmb_rotated = self.rotate(mmb, alfa)
         
+        self.sigma = -alfa
         return self.resizeRectangle(building, mmb_rotated)
 
     def gain(self, p1: QPoint, p2: QPoint):
@@ -324,7 +326,6 @@ class Algorithms:
             p2 = building[(i + 1) % len(building)]
             sigma = self.gain(p1, p2) % (pi/2)  # modulo pi/2 for each edge
             sigma_list.append(sigma)
-        
         #get gain of the first edge
         sigma_base = sigma_list[0]
             
@@ -360,6 +361,7 @@ class Algorithms:
         mmb_rotated = self.rotate(mmb, main_direction)
         mmb_resized = self.resizeRectangle(building, mmb_rotated)
 
+        self.sigma = -main_direction
         return mmb_resized
 
     def createWeightedBisector(self, building: QPolygonF) -> QPolygonF:
@@ -424,7 +426,8 @@ class Algorithms:
         mmb, area = self.createMMB(building_rotated)
 
         mmb_min_res = self.resizeRectangle(building_rotated, mmb)
-            
+        
+        self.sigma = -sigma
         return self.rotate(mmb_min_res, sigma)
 
     def euclideanDistance(self, point1: QPointF, point2: QPointF) -> float:
@@ -455,13 +458,6 @@ class Algorithms:
                 return True
 
         return False
-    
-    def gain(self, p1: QPoint, p2: QPoint):
-        dx = p2.x() - p1.x()
-        dy = p2.y() - p1.y()
-        gain = atan2(dy, dx)
-
-        return gain
 
     def evaluateSimplification(self, building: QPolygonF, sigma: float):
         #for every edge of a building
@@ -491,4 +487,5 @@ class Algorithms:
         #calculate the "Strední hodnota ctvercu úhlových odchylek jednotlivých segmentu"
         result = (pi/(2*len(building))) * sqrt(sum_squares)
         angle_result = result*180/pi
+        print(sigma)
         return angle_result

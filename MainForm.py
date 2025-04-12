@@ -155,16 +155,20 @@ class Ui_MainForm(object):
     def closeApp(self):
         QApplication.instance().quit()
 
-    def simplifyBuildingMBR(self, building):
+    def simplifyBuildingMBR(self):
         a = Algorithms()
         # get input data
         buildings = ui.Canvas.buildings
 
         #simplify all input data
         buildings_simp = []
+        buildings_correct = []
         for building in buildings:
             buildings_simp.append(a.createMBR(building))
-            a.evaluateSimplification(building, a.sigma)
+            eval = a.evaluateSimplification(building, a.sigma)
+            if eval <= 10:
+                buildings_correct.append(building)
+        ui.Canvas.building_correct = buildings_correct
 
         #set simplified buildings
         ui.Canvas.buildings_simp = buildings_simp
@@ -172,16 +176,20 @@ class Ui_MainForm(object):
         #repaint
         ui.Canvas.repaint()
         
-    def simplifyBuildingPCA(self, building):
+    def simplifyBuildingPCA(self):
         a = Algorithms()
         # get input data     
         buildings = ui.Canvas.buildings
 
         #simplify all input data
         buildings_simp = []
+        buildings_correct = []
         for building in buildings:
             buildings_simp.append(a.createBRPCA(building))
-            a.evaluateSimplification(building, a.sigma)
+            eval = a.evaluateSimplification(building, a.sigma)
+            if eval <= 10:
+                buildings_correct.append(building)
+        ui.Canvas.building_correct = buildings_correct
 
         #set simplified buildings
         ui.Canvas.buildings_simp = buildings_simp
@@ -189,7 +197,7 @@ class Ui_MainForm(object):
         #repaint
         ui.Canvas.repaint()
         
-    def simplifyBuildingLongestEdge(self, building):
+    def simplifyBuildingLongestEdge(self):
         a = Algorithms()
         # get input data     
         buildings = ui.Canvas.buildings
@@ -202,37 +210,49 @@ class Ui_MainForm(object):
             eval = a.evaluateSimplification(building, a.sigma)
             if eval <= 10:
                 buildings_correct.append(building)
+        ui.Canvas.building_correct = buildings_correct
 
         #set simplified buildings
         ui.Canvas.buildings_simp = buildings_simp
-        ui.Canvas.building_correct = buildings_correct
 
         #repaint
         ui.Canvas.repaint()
         
-    def simplifyBuildingWallAverage(self, building):
+    def simplifyBuildingWallAverage(self):
         a = Algorithms()
         # get input data
-        building = ui.Canvas.buildings
+        buildings = ui.Canvas.buildings
         
         # simplify building
-        building_simp = a.createWallAverage(building)
+        buildings_simp = []
+        buildings_correct = []
+        for building in buildings:
+            buildings_simp.append(a.createWallAverage(building))
+            eval = a.evaluateSimplification(building, a.sigma)
+            if eval <= 10:
+                buildings_correct.append(building)
+        ui.Canvas.building_correct = buildings_correct
         
         # set result
-        ui.Canvas.setSimplifiedBuilding(building_simp)
+        ui.Canvas.buildings_simp = buildings_simp
 
         #repaint
         ui.Canvas.repaint()
 
-    def simplifyBuildingWeightedBisector(self, building):
+    def simplifyBuildingWeightedBisector(self):
         a = Algorithms()
         # get input data     
         buildings = ui.Canvas.buildings
 
         #simplify all input data
         buildings_simp = []
+        buildings_correct = []
         for building in buildings:
             buildings_simp.append(a.createWeightedBisector(building))
+            eval = a.evaluateSimplification(building, a.sigma)
+            if eval <= 10:
+                buildings_correct.append(building)
+        ui.Canvas.building_correct = buildings_correct
 
         #set simplified buildings
         ui.Canvas.buildings_simp = buildings_simp
