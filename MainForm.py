@@ -189,7 +189,7 @@ class Ui_MainForm(object):
         for building in buildings:
             buildings_simp.append(a.createLongestEdge(building))
             eval = a.evaluateSimplification(building, a.sigma)
-            if eval >= 10:
+            if eval <= 10:
                 buildings_correct.append(building)
 
         #set simplified buildings

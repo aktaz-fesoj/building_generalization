@@ -441,8 +441,6 @@ class Algorithms:
         for i in range(len(building)):
             sigma_i = self.gain(building[i], building[(i + 1) % len(building)])
             sigma_diff = (sigma_i - sigma)
-            #print(sigma_diff)
-            #print(asin(sin(sigma_diff)))
             ki = (2 * sigma_diff) / pi
             ri = (ki - floor(ki)) * (pi/2)
             ri_list.append(ri)
