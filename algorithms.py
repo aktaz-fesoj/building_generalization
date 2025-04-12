@@ -1,6 +1,7 @@
 from math import *
 from itertools import combinations
 from heapq import heapify, heappop, heappush
+from statistics import mean
 
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
@@ -9,6 +10,7 @@ import numpy as np
 
 class Algorithms:
     def __init__(self):
+        self.sigma = 0
         pass
     
     def get2VectorsAngle(self, p1: QPointF, p2: QPointF, p3: QPointF, p4:QPointF):
@@ -228,7 +230,8 @@ class Algorithms:
         
         #resize        
         mmb_min_res = self.resizeRectangle(building, mmb_min)
-                
+
+        self.sigma = sigma 
         return self.rotate(mmb_min_res, sigma_min)
         
     def createBRPCA(self, building: QPolygonF):
@@ -328,13 +331,6 @@ class Algorithms:
 
         Reutrns: The simplified building: QPolygonF
         """
-        #todo list
-        #filter out edges from diagonals
-        #filter out lines that intersect polygons from diagonals
-        #if no correct diagonals are found create a fallback
-
-        #there might be bug with angle wrapping? (not sure how to solve it)
-
         points = [building[i] for i in range(len(building))]
         point_pairs = list(combinations(points, 2))
 
@@ -422,3 +418,42 @@ class Algorithms:
                 return True
 
         return False
+    
+    def gain(self, p1: QPoint, p2: QPoint):
+        dx = p2.x() - p1.x()
+        dy = p2.y() - p1.y()
+        gain = atan2(dy, dx)
+
+        return gain
+
+    def evaluateSimplification(self, building: QPolygonF, sigma: float):
+        #for every edge of a building
+            #calculate the edge direction
+            #calculate the difference of of edge direction and principal direction (sigma)
+            #calculate ki and ri
+
+        #calculate average of r_list = r_mean
+
+        #calculate the "Stˇrední hodnota ctverc˚u úhlových odchylek jednotlivých segment˚u"
+        
+        ri_list = []
+
+        for i in range(len(building)):
+            sigma_i = self.gain(building[i], building[(i + 1) % len(building)])
+            sigma_diff = (sigma_i - sigma)
+            #print(sigma_diff)
+            #print(asin(sin(sigma_diff)))
+            ki = (2 * sigma_diff) / pi
+            ri = (ki - floor(ki)) * (pi/2)
+            ri_list.append(ri)
+
+        r_mean = mean(ri_list)
+
+        sum_squares = 0
+        for val in ri_list:
+            sum_squares += (val-r_mean)**2
+
+        #calculate the "Strední hodnota ctvercu úhlových odchylek jednotlivých segmentu"
+        result = (pi/(2*len(building))) * sqrt(sum_squares)
+        angle_result = result*180/pi
+        return angle_result

@@ -153,10 +153,11 @@ class Ui_MainForm(object):
         buildings_simp = []
         for building in buildings:
             buildings_simp.append(a.createMBR(building))
+            a.evaluateSimplification(building, a.sigma)
 
         #set simplified buildings
         ui.Canvas.buildings_simp = buildings_simp
-
+        
         #repaint
         ui.Canvas.repaint()
         
@@ -169,6 +170,7 @@ class Ui_MainForm(object):
         buildings_simp = []
         for building in buildings:
             buildings_simp.append(a.createBRPCA(building))
+            a.evaluateSimplification(building, a.sigma)
 
         #set simplified buildings
         ui.Canvas.buildings_simp = buildings_simp
@@ -183,11 +185,16 @@ class Ui_MainForm(object):
 
         #simplify all input data
         buildings_simp = []
+        buildings_correct = []
         for building in buildings:
             buildings_simp.append(a.createLongestEdge(building))
+            eval = a.evaluateSimplification(building, a.sigma)
+            if eval >= 10:
+                buildings_correct.append(building)
 
         #set simplified buildings
         ui.Canvas.buildings_simp = buildings_simp
+        ui.Canvas.building_correct = buildings_correct
 
         #repaint
         ui.Canvas.repaint()
