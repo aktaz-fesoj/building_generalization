@@ -462,7 +462,7 @@ class Algorithms:
     def evaluateSimplification(self, building: QPolygonF, sigma: float):
         #for every edge of a building
             #calculate the edge direction
-            #calculate the difference of of edge direction and principal direction (sigma)
+            #calculate the difference of the edge direction and the principal direction (sigma)
             #calculate ki and ri
 
         #calculate average of r_list = r_mean
@@ -487,5 +487,4 @@ class Algorithms:
         #calculate the "Strední hodnota ctvercu úhlových odchylek jednotlivých segmentu"
         result = (pi/(2*len(building))) * sqrt(sum_squares)
         angle_result = result*180/pi
-        print(sigma)
         return angle_result
