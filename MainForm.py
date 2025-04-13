@@ -176,7 +176,7 @@ class Ui_MainForm(object):
         
         #evaluate rusult
         print("METODA", inspect.currentframe().f_code.co_name)
-        self.print_result(self, buildings_simp, buildings_correct)
+        self.print_result(buildings_simp, buildings_correct)
         
         #repaint
         ui.Canvas.repaint()
@@ -201,7 +201,7 @@ class Ui_MainForm(object):
 
         #evaluate rusult
         print("METODA", inspect.currentframe().f_code.co_name)
-        self.print_result(self, buildings_simp, buildings_correct)
+        self.print_result(buildings_simp, buildings_correct)
         
         #repaint
         ui.Canvas.repaint()
@@ -226,7 +226,7 @@ class Ui_MainForm(object):
         
         #evaluate rusult
         print("METODA", inspect.currentframe().f_code.co_name)
-        self.print_result(self, buildings_simp, buildings_correct)
+        self.print_result(buildings_simp, buildings_correct)
 
         #repaint
         ui.Canvas.repaint()
@@ -251,7 +251,7 @@ class Ui_MainForm(object):
         
         #evaluate rusult
         print("METODA", inspect.currentframe().f_code.co_name)
-        self.print_result(self, buildings_simp, buildings_correct)
+        self.print_result(buildings_simp, buildings_correct)
 
         #repaint
         ui.Canvas.repaint()
@@ -276,7 +276,7 @@ class Ui_MainForm(object):
         
         #evaluate rusult
         print("METODA", inspect.currentframe().f_code.co_name)
-        self.print_result(self, buildings_simp, buildings_correct)
+        self.print_result(buildings_simp, buildings_correct)
 
         #repaint
         ui.Canvas.repaint()
@@ -299,7 +299,7 @@ class Ui_MainForm(object):
     def print_result(self, buildings_simp, buildings_correct):
         print(f"Celkem generalizováno budov {len(buildings_simp)}")
         print(f"Z toho (dle zvoleného kritéria) úspěšně: {len(buildings_correct)}")
-        correctness = (len(buildings_correct)/len(buildings_correct))*100
+        correctness = (len(buildings_correct)/len(buildings_simp))*100
         print(f"Celková úspěšnost generalizace: {correctness}")
 
 if __name__ == "__main__":
