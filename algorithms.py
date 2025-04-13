@@ -302,6 +302,8 @@ class Algorithms:
         #rerotate the mmb to align with the longest edge of the original polygon
         mmb_rotated = self.rotate(mmb, alfa)
         
+        self.evaluateSimplification(building, alfa)
+        
         return self.resizeRectangle(building, mmb_rotated)
 
     def gain(self, p1: QPoint, p2: QPoint):
@@ -311,7 +313,7 @@ class Algorithms:
 
         return gain
     
-    def createWallAverage(self, building: QPolygonF):
+    def createWallAverage(self, building):
         # creates a simplified building using the Wall Average method
         
         sigma_list = []
@@ -459,3 +461,26 @@ class Algorithms:
                 return True
 
         return False
+    
+    def evaluateSimplification(self, building: QPolygonF, sigma: float):
+
+        
+        sum_diff = 0.0
+    
+        for i in range(len(building)):
+            sigma_i = self.gain(building[i], building[(i+1) % len(building)])
+            
+            # Rozdíl v rozmezí -π..π:
+            d = ((sigma_i - sigma) + pi) % (2*pi) - pi
+            
+            diff = abs(d)  # 0..π
+            # Pokud nechceme rozlišit hranu 179° a 1°, zrcadlíme nad pi/2:
+            if diff > pi/2:
+                diff = pi - diff
+
+            sum_diff += diff
+
+        avg_diff_rad = sum_diff / len(building)
+        avg_diff_deg = avg_diff_rad * 180.0/pi
+        print(avg_diff_deg)
+        return avg_diff_deg

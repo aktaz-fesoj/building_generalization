@@ -196,7 +196,6 @@ class Ui_MainForm(object):
         buildings_simp = []
         for building in buildings:
             buildings_simp.append(a.createLongestEdge(building))
-
         #set simplified buildings
         ui.Canvas.buildings_simp = buildings_simp
 
@@ -206,13 +205,15 @@ class Ui_MainForm(object):
     def simplifyBuildingWallAverage(self, building):
         a = Algorithms()
         # get input data
-        building = ui.Canvas.buildings
+        buildings = ui.Canvas.buildings
         
-        # simplify building
-        building_simp = a.createWallAverage(building)
+        #simplify all input data
+        buildings_simp = []
+        for building in buildings:
+            buildings_simp.append(a.createWallAverage(building))
         
         # set result
-        ui.Canvas.setSimplifiedBuilding(building_simp)
+        ui.Canvas.buildings_simp = buildings_simp
 
         #repaint
         ui.Canvas.repaint()
