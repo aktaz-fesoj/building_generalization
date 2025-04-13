@@ -3,6 +3,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 from draw import Draw
 from algorithms import *
 from read_shp import load_shapefile
+import inspect
 
 class Ui_MainForm(object):
     def setupUi(self, MainForm):
@@ -173,6 +174,10 @@ class Ui_MainForm(object):
         #set simplified buildings
         ui.Canvas.buildings_simp = buildings_simp
         
+        #evaluate rusult
+        print("METODA", inspect.currentframe().f_code.co_name)
+        self.print_result(self, buildings_simp, buildings_correct)
+        
         #repaint
         ui.Canvas.repaint()
         
@@ -194,6 +199,10 @@ class Ui_MainForm(object):
         #set simplified buildings
         ui.Canvas.buildings_simp = buildings_simp
 
+        #evaluate rusult
+        print("METODA", inspect.currentframe().f_code.co_name)
+        self.print_result(self, buildings_simp, buildings_correct)
+        
         #repaint
         ui.Canvas.repaint()
         
@@ -214,6 +223,10 @@ class Ui_MainForm(object):
 
         #set simplified buildings
         ui.Canvas.buildings_simp = buildings_simp
+        
+        #evaluate rusult
+        print("METODA", inspect.currentframe().f_code.co_name)
+        self.print_result(self, buildings_simp, buildings_correct)
 
         #repaint
         ui.Canvas.repaint()
@@ -235,6 +248,10 @@ class Ui_MainForm(object):
         
         # set result
         ui.Canvas.buildings_simp = buildings_simp
+        
+        #evaluate rusult
+        print("METODA", inspect.currentframe().f_code.co_name)
+        self.print_result(self, buildings_simp, buildings_correct)
 
         #repaint
         ui.Canvas.repaint()
@@ -256,6 +273,10 @@ class Ui_MainForm(object):
 
         #set simplified buildings
         ui.Canvas.buildings_simp = buildings_simp
+        
+        #evaluate rusult
+        print("METODA", inspect.currentframe().f_code.co_name)
+        self.print_result(self, buildings_simp, buildings_correct)
 
         #repaint
         ui.Canvas.repaint()
@@ -274,6 +295,12 @@ class Ui_MainForm(object):
         ui.Canvas.paintInputEvent(polygons)
 
         ui.Canvas.repaint()
+        
+    def print_result(self, buildings_simp, buildings_correct):
+        print(f"Celkem generalizováno budov {len(buildings_simp)}")
+        print(f"Z toho (dle zvoleného kritéria) úspěšně: {len(buildings_correct)}")
+        correctness = (len(buildings_correct)/len(buildings_correct))*100
+        print(f"Celková úspěšnost generalizace: {correctness}")
 
 if __name__ == "__main__":
     import sys
