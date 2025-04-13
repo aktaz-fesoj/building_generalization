@@ -24,7 +24,12 @@ class Draw(QWidget):
         #Draw building
         for building in self.buildings:
             qp.drawPolygon(building)
-        
+            
+        qp.setPen(Qt.GlobalColor.gray)
+        qp.setBrush(Qt.GlobalColor.green)
+        for building_corr in self.building_correct:
+            qp.drawPolygon(building_corr)
+            
         #Set graphical attributes
         qp.setPen(Qt.GlobalColor.blue)
         qp.setBrush(Qt.GlobalColor.transparent)
@@ -32,11 +37,6 @@ class Draw(QWidget):
         #Draw building
         for building_simp in self.buildings_simp:
             qp.drawPolygon(building_simp)
-
-        qp.setPen(Qt.GlobalColor.gray)
-        qp.setBrush(Qt.GlobalColor.green)
-        for building_corr in self.building_correct:
-            qp.drawPolygon(building_corr)
 
     def paintInputEvent(self, polygons):
         self.buildings = polygons
